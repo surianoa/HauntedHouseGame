@@ -6,18 +6,18 @@ import java.util.List;
 public class Player {
 	
 	private String name;
-	private boolean playable;
+	private boolean antagonist;
 	private List<Item> inventory;
 	
-	public Player(String name, boolean playable){
+	public Player(String name, boolean antagonist){
 		this.setName(name);
-		this.setPlayable(playable);
+		this.setAntagonist(antagonist);
 		setInventory(new ArrayList<>());		
 	}
 	
 	public Player(){
 		setName("antagonist");
-		setPlayable(false);
+		setAntagonist(true);
 		setInventory(new ArrayList<>());
 	}
 
@@ -29,12 +29,12 @@ public class Player {
 		this.inventory = inventory;
 	}
 
-	public boolean isPlayable() {
-		return playable;
+	public boolean isAntagonist() {
+		return antagonist;
 	}
 
-	public void setPlayable(boolean playable) {
-		this.playable = playable;
+	public void setAntagonist(boolean playable) {
+		this.antagonist = playable;
 	}
 
 	public String getName() {

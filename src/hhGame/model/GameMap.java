@@ -1,6 +1,8 @@
 package hhGame.model;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public abstract class GameMap {
 	HashMap<String, Room> map;
@@ -12,8 +14,14 @@ public abstract class GameMap {
 		return null;
 	}
 	
+	public Collection<Room> getRoomsInMap(){		
+		return map.values();
+	}
+	
 	
 	public abstract void buildMap();	
 	public abstract Room getStartingPoint();
+	public abstract Room getEndingPoint();
+	public abstract List<Item> getMapItems();
 		
 }

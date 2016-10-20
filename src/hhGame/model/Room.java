@@ -6,6 +6,7 @@ public class Room {
 	private Item item;
 	private Player player;
 	private boolean visited;
+	private boolean antagonist;
 	private Room north, south, east, west;
 	
 	public Room(String name, String description, Item item){
@@ -13,6 +14,30 @@ public class Room {
 		this.setDescription(description);
 		this.setItem(item);
 		setVisited(false);
+		antagonist = false;
+	}
+	
+	public Room getNeighbor(Direction move) {
+		switch(move){
+			case NORTH:
+				return north;
+			case EAST:
+				return east;
+			case SOUTH:
+				return south;
+			case WEST:
+				return west;
+			default:
+				return null;
+		}
+	}
+	
+	public boolean hasAntagonist(){
+		return antagonist;
+	}
+	
+	public void setAntagonist(boolean a){
+		antagonist = a;
 	}
 
 	public String getName() {
@@ -92,21 +117,6 @@ public class Room {
 
 	public void setPlayer(Player player) {
 		this.player = player;
-	}
-
-	public Room getNeighbor(Direction move) {
-		switch(move){
-			case NORTH:
-				return north;
-			case EAST:
-				return east;
-			case SOUTH:
-				return south;
-			case WEST:
-				return west;
-			default:
-				return null;
-		}
 	}
 	
 }

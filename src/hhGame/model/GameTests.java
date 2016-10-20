@@ -20,7 +20,7 @@ public class GameTests {
 	public void playerMoveTest(){
 		assertNull(test.getLast());
 		test.movePlayer(Direction.SOUTH);
-		assertEquals("South", test.getLast().getName());
+		assertNull(test.getLast());
 		assertEquals(test.getMap().getRoom("South"), test.getCurrent());
 		
 		test.movePlayer(Direction.NORTH);	
@@ -28,19 +28,51 @@ public class GameTests {
 		assertEquals("Center", test.getCurrent().getName());		
 	}
 	
+//  Test no longer needed bc items are no longer hard coded
+//	@Test
+//	public void inventoryTest(){
+//		test.movePlayer(Direction.NORTH);
+//		assertEquals("Center", test.getCurrent().getName());
+//		assertEquals(0, test.getProtagonist().getInventory().size());
+//		test.movePlayer(Direction.WEST);
+//		assertNotNull(test.getCurrent().getItem());
+//		assertEquals("key", test.getCurrent().getItem().getName() );
+//		assertTrue(test.searchCurrentRoom());
+//		assertEquals(1, test.getProtagonist().getInventory().size());
+//		assertEquals("key", test.getProtagonist().getInventory().get(0).getName());
+//		assertNull(test.getCurrent().getItem());
+//		assertFalse(test.searchCurrentRoom());		
+//	}
+	
 	@Test
-	public void inventoryTest(){
-		test.movePlayer(Direction.NORTH);
-		assertEquals("Center", test.getCurrent().getName());
-		assertEquals(0, test.getProtagonist().getInventory().size());
-		test.movePlayer(Direction.WEST);
-		assertNotNull(test.getCurrent().getItem());
-		assertEquals("key", test.getCurrent().getItem().getName() );
-		assertTrue(test.searchCurrentRoom());
-		assertEquals(1, test.getProtagonist().getInventory().size());
-		assertEquals("key", test.getProtagonist().getInventory().get(0).getName());
-		assertNull(test.getCurrent().getItem());
-		assertFalse(test.searchCurrentRoom());
+	public void randomRoomTest(){
+		Room temp = test.getRandomRoom();
+		assertNotEquals(test.getCurrent(), temp);
+		assertNotEquals(test.getMap().getStartingPoint(), temp);
+		assertNotEquals(test.getMap().getEndingPoint(), temp);
 		
+		test.movePlayer(Direction.NORTH);
+		temp = test.getRandomRoom();
+		assertNotEquals(test.getCurrent(), temp);
+		assertNotEquals(test.getMap().getStartingPoint(), temp);
+		assertNotEquals(test.getMap().getEndingPoint(), temp);		
 	}
+	
+	@Test
+	public void testItemPlacement(){
+		assertEquals(0,test.testNumberOfItemsOnMap());
+		test.placeItemsOnMap();
+		assertEquals(2,test.testNumberOfItemsOnMap());
+	}
+	
+	@Test
+	public void testAntagonistPlacement(){
+		assertEquals(0, test.testNumberOfAntagonists());
+		test.placeAntagonist();
+		assertEquals(1, test.testNumberOfAntagonists());
+	}
+	
+	
+	
+	
 }
