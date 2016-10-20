@@ -4,8 +4,9 @@ public class Room {
 	private String name;
 	private String description;
 	private Item item;
+	private Player player;
 	private boolean visited;
-	private String north, south, east, west;
+	private Room north, south, east, west;
 	
 	public Room(String name, String description, Item item){
 		this.setName(name);
@@ -46,40 +47,66 @@ public class Room {
 		this.visited = visited;
 	}
 
-	public String getNorth() {
+	public Room getNorth() {
 		return north;
 	}
 
-	public void setNorth(String north) {
+	public void setNorth(Room north) {
 		this.north = north;
 	}
 
-	public String getSouth() {
+	public Room getSouth() {
 		return south;
 	}
 
-	public void setSouth(String south) {
+	public void setSouth(Room south) {
 		this.south = south;
 	}
 
-	public String getEast() {
+	public Room getEast() {
 		return east;
 	}
 
-	public void setEast(String east) {
+	public void setEast(Room east) {
 		this.east = east;
 	}
 
-	public String getWest() {
+	public Room getWest() {
 		return west;
 	}
 
-	public void setWest(String west) {
+	public void setWest(Room west) {
 		this.west = west;
 	}
 	
-	
+	public void setNeighbors(Room north, Room east, Room south, Room west ){
+		this.north = north;
+		this.east = east;
+		this.south = south;
+		this.west = west;
+	}
 
-	
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
+	public Room getNeighbor(Direction move) {
+		switch(move){
+			case NORTH:
+				return north;
+			case EAST:
+				return east;
+			case SOUTH:
+				return south;
+			case WEST:
+				return west;
+			default:
+				return null;
+		}
+	}
 	
 }
