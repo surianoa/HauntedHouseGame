@@ -70,6 +70,10 @@ public class GameTests {
 		assertEquals(0, test.testNumberOfAntagonists());
 		test.placeAntagonist();
 		assertEquals(1, test.testNumberOfAntagonists());
+		Room past = test.getAntagonist();
+		test.moveAntagonist();
+		assertNotEquals(past, test.getAntagonist());
+		
 	}
 	
 	

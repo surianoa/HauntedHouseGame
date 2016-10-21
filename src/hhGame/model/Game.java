@@ -3,19 +3,17 @@ package hhGame.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-
-import org.omg.PortableInterceptor.DISCARDING;
 
 public class Game {
-	
-	private Room current, last, antagonist;
+
 	private GameMap map;
+	private Room current, last, antagonist;
 	private Player protagonist;
 	private boolean antOut;
 	Random random;
 	private boolean antagonistPresent;
 	private final int MAX_TRIES = 10;
+	String message;
 
 	public Game(Level l){
 		setup(l);
@@ -37,6 +35,7 @@ public class Game {
 		antagonist = null;
 		random = new Random();
 		antagonistPresent = false;
+		message = "Welcome to the game";
 	}
 
 	public void movePlayer(Direction move) {
@@ -47,7 +46,7 @@ public class Game {
 			last.setPlayer(null);
 		}
 		else{
-			System.out.println("not valid move");
+			message = "There is not a room in that direction";
 		}
 	}
 	/*
@@ -57,9 +56,12 @@ public class Game {
 	public boolean searchCurrentRoom(){
 		if(current.getItem()!=null){
 			protagonist.addItemToInventory(current.getItem());
+			message = "You found a new " + current.getItem().getName();
 			current.setItem(null);
+			
 			if(!antagonistPresent){
 				placeAntagonist();
+				message += "You have unleashed the antagonist. Don't get caugt.";
 			}
 			return true;
 		}
@@ -156,34 +158,26 @@ public class Game {
 		
 	}
 	
-	private void moveAntagonist() {
+	public void moveAntagonist() {
 		if(antagonistPresent){
 			List<Direction> validMoves = getValidMoves(antagonist);
-			Room temp;
-			int tries = 0;
-			boolean success = false;
-			do{
-				temp = antagonist.getNeighbor(validMoves.get(random.nextInt(validMoves.size())));
-				if(!temp.hasAntagonist()){
-					success = true;
-				}
-				tries++;
-			}while(!success || tries<MAX_TRIES);
-			
+			Room temp = antagonist.getNeighbor(validMoves.get(random.nextInt(validMoves.size())));			
 			temp.setAntagonist(true);
 			antagonist.setAntagonist(false);
+			antagonist = temp;
+			System.out.println("The antagonist is now in" + antagonist.getName());
 		}
 	}
 
 	private List<Direction> getValidMoves(Room room) {
 		List<Direction> valid = new ArrayList<>();
-		if(room.getNeighbor(Direction.NORTH)!=null)
+		if(room.getNeighbor(Direction.NORTH)!=null && !room.getNeighbor(Direction.NORTH).hasAntagonist())
 			valid.add(Direction.NORTH);
-		if(room.getNeighbor(Direction.EAST)!=null)
+		if(room.getNeighbor(Direction.EAST)!=null && !room.getNeighbor(Direction.EAST).hasAntagonist())
 			valid.add(Direction.EAST);
-		if(room.getNeighbor(Direction.SOUTH)!=null)
+		if(room.getNeighbor(Direction.SOUTH)!=null && !room.getNeighbor(Direction.SOUTH).hasAntagonist())
 			valid.add(Direction.SOUTH);
-		if(room.getNeighbor(Direction.WEST)!=null)
+		if(room.getNeighbor(Direction.WEST)!=null && !room.getNeighbor(Direction.WEST).hasAntagonist())
 			valid.add(Direction.WEST);
 		
 		return valid;		
@@ -240,10 +234,19 @@ public class Game {
 		this.antOut = antOut;
 	}
 	
+	public Room getAntagonist() {
+		return antagonist;
+	}
 
-//	public static void main(String[] args) {
-//		// TODO Auto-generated method stub
-//
-//	}
+	public void setAntagonist(Room antagonist) {
+		this.antagonist = antagonist;
+	}
+	
+
+	public static void main(String[] args) {
+		Game game = new Game(Level.TEST);
+		
+		
+	}
 
 }
