@@ -3,6 +3,7 @@ package hhGame.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Game {
 
@@ -14,12 +15,16 @@ public class Game {
 	private boolean antagonistPresent;
 	private final int MAX_TRIES = 10;
 	String message;
+	private boolean gameOver;
+	private int numberOfItems; 
+	List<Room> notValid;
 
 	public Game(Level l){
 		setup(l);
 	}
 
 	private void setup(Level l) {
+		random = new Random();
 		switch(l){
 		default:
 			map = new TestMap();
@@ -27,15 +32,21 @@ public class Game {
 			break;
 		}
 		
+		placeItemsOnMap();
+		numberOfItems = map.getMapItems().size();
 		protagonist = new Player("Main", true);
 		current = map.getStartingPoint();
 		current.setPlayer(protagonist);
 		last = null;
 		antOut = false;
 		antagonist = null;
-		random = new Random();
+		notValid = new ArrayList<>();
+		notValid.add(map.getEndingPoint());
+		notValid.add(map.getStartingPoint());
+		notValid.add(current);
 		antagonistPresent = false;
 		message = "Welcome to the game";
+		gameOver = false;
 	}
 
 	public void movePlayer(Direction move) {
@@ -65,6 +76,7 @@ public class Game {
 			}
 			return true;
 		}
+		message = "You found nothing here.";
 		return false;
 	}
 	
@@ -95,12 +107,11 @@ public class Game {
 	 */
 	public Room getRandomRoom() {
 		ArrayList<Room> availableRooms = new ArrayList<Room>(map.getRoomsInMap());
-		System.out.println("");
 		availableRooms.remove(map.getStartingPoint());
 		availableRooms.remove(map.getEndingPoint());
 		availableRooms.remove(current);
 		
-		int rand = random.nextInt(availableRooms.size());
+		int rand = random.nextInt(availableRooms.size()-1);
 		
 		
 		return availableRooms.get(rand);		
@@ -111,8 +122,9 @@ public class Game {
 		
 		while(items.size()>0){
 			Item i = items.get(items.size()-1);
-			Room temp = getRandomRoom();
+ 			Room temp = getRandomRoom();
 			if(temp.getItem()==null){
+				System.out.println("item placed in " + temp.getName());
 				temp.setItem(i);
 				items.remove(i);
 			}
@@ -134,7 +146,7 @@ public class Game {
 		int count = 0;
 		for(Room r: map.getRoomsInMap()){
 			if(r.hasAntagonist()){
-				System.out.println("An antagonist can be found in " + r.getName());
+				System.out.println("\nAn antagonist can be found in " + r.getName());
 				count++;
 			}
 		}
@@ -148,16 +160,34 @@ public class Game {
 		//else move check to see if end point and has all items 
 		if(isValidMove(d)){
 			movePlayer(d);
-			if(current.getNeighbor(d).hasAntagonist()){
+			if(current.hasAntagonist()){
 				killPlayer();
 			}else{
 				moveAntagonist();
 			}
-			
+			message = "You are now in the " + current.getName();
+			checkWin();
+		}else{
+			message = "There is no room in that direction. Try again";
+		}		
+	}
+	
+	private void checkWin() {
+		if(current.equals(map.getEndingPoint()) && protagonist.getInventory().size() == numberOfItems){
+			message = "You win!";
+			gameOver = true;
 		}
 		
 	}
-	
+
+	private void printMessage() {
+		System.out.println(message);
+		if(!gameOver){
+			System.out.println("Please type a command:");
+			message = "";
+		}		
+	}
+
 	public void moveAntagonist() {
 		if(antagonistPresent){
 			List<Direction> validMoves = getValidMoves(antagonist);
@@ -165,26 +195,29 @@ public class Game {
 			temp.setAntagonist(true);
 			antagonist.setAntagonist(false);
 			antagonist = temp;
-			System.out.println("The antagonist is now in" + antagonist.getName());
+			System.out.println("The antagonist is now in " + antagonist.getName());
+			System.out.flush();
 		}
 	}
 
 	private List<Direction> getValidMoves(Room room) {
 		List<Direction> valid = new ArrayList<>();
-		if(room.getNeighbor(Direction.NORTH)!=null && !room.getNeighbor(Direction.NORTH).hasAntagonist())
+		if(room.getNeighbor(Direction.NORTH)!=null && !room.getNeighbor(Direction.NORTH).hasAntagonist() && !notValid.contains(room) )
 			valid.add(Direction.NORTH);
-		if(room.getNeighbor(Direction.EAST)!=null && !room.getNeighbor(Direction.EAST).hasAntagonist())
+		if(room.getNeighbor(Direction.EAST)!=null && !room.getNeighbor(Direction.EAST).hasAntagonist() && !notValid.contains(room))
 			valid.add(Direction.EAST);
-		if(room.getNeighbor(Direction.SOUTH)!=null && !room.getNeighbor(Direction.SOUTH).hasAntagonist())
+		if(room.getNeighbor(Direction.SOUTH)!=null && !room.getNeighbor(Direction.SOUTH).hasAntagonist() &&  !notValid.contains(room))
 			valid.add(Direction.SOUTH);
-		if(room.getNeighbor(Direction.WEST)!=null && !room.getNeighbor(Direction.WEST).hasAntagonist())
+		if(room.getNeighbor(Direction.WEST)!=null && !room.getNeighbor(Direction.WEST).hasAntagonist()&& !notValid.contains(room))
 			valid.add(Direction.WEST);
 		
 		return valid;		
 	}
 
 	private void killPlayer() {
-		System.out.println("You have encountered an antagonist. You are dead.");
+		message = "You have encountered an antagonist. You are dead.";
+		printMessage();
+		gameOver = true;		
 	}
 
 	private boolean isValidMove(Direction d) {
@@ -244,8 +277,43 @@ public class Game {
 	
 
 	public static void main(String[] args) {
-		Game game = new Game(Level.TEST);
 		
+		Game game = new Game(Level.TEST);
+		System.out.println("Welcome to the Maison Macabre. You are in the " + game.getCurrent().getName()+ "\n");
+		Scanner scan = new Scanner(System.in);
+		String turn = scan.nextLine();
+		
+		while(!game.gameOver){
+			switch(turn.toUpperCase()){
+				case "NORTH":
+					game.move(Direction.NORTH);
+					break;
+				case "SOUTH":
+					game.move(Direction.SOUTH);
+					break;
+				case "EAST":
+					game.move(Direction.EAST);
+					break;
+				case "WEST":
+					game.move(Direction.WEST);
+					break;
+				case "SEARCH":
+					game.searchCurrentRoom();
+					break;
+				case "QUIT":
+					game.gameOver = true;
+				case "LOOK":
+					System.out.println("The current room is "+ game.getCurrent().getName());
+					break;
+				default:
+					System.out.println("Invalid input. Please type a direction or search to search the room.");
+					break;
+			}
+			game.printMessage();
+			turn = scan.nextLine();
+		}
+		scan.close();
+		System.out.println("Game over.");	
 		
 	}
 

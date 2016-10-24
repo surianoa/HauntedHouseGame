@@ -20,9 +20,8 @@ public class TestMap extends GameMap {
 		Room goal = new Room("Goal", "the finish line", null);
 		
 		center.setNeighbors(north, east, south, west);
-		north.setNeighbors(null, null, center, null);
-		east.setWest(center);
-		east.setNorth(nWest);
+		north.setNeighbors(goal, nEast, center, nWest);
+		east.setNeighbors(nEast, null, null, center);;
 		south.setNorth(center);
 		west.setNeighbors(nWest, center, null, null);
 		nWest.setNeighbors(null, north, west, null);
