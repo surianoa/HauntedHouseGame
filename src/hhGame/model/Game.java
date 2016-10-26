@@ -72,8 +72,9 @@ public class Game {
 			
 			if(!antagonistPresent){
 				placeAntagonist();
-				message += "You have unleashed the antagonist. Don't get caugt.";
+				message += "\nYou have unleashed the antagonist. Don't get caugt.";
 			}
+			checkForAntagonist();
 			return true;
 		}
 		message = "You found nothing here.";
@@ -111,8 +112,7 @@ public class Game {
 		availableRooms.remove(map.getEndingPoint());
 		availableRooms.remove(current);
 		
-		int rand = random.nextInt(availableRooms.size()-1);
-		
+		int rand = random.nextInt(availableRooms.size()-1);		
 		
 		return availableRooms.get(rand);		
 	}
@@ -167,11 +167,24 @@ public class Game {
 			}
 			message = "You are now in the " + current.getName();
 			checkWin();
+			checkForAntagonist();
 		}else{
 			message = "There is no room in that direction. Try again";
 		}		
 	}
 	
+	private boolean checkForAntagonist() {
+		for(Direction d: Direction.values()){
+			if(current.getNeighbor(d)!=null){
+				if(current.getNeighbor(d).hasAntagonist()){
+					message+="\nThe antagonist is nearby. Watch your step.";
+				}
+			}
+		}
+			
+		return false;
+	}
+
 	private void checkWin() {
 		if(current.equals(map.getEndingPoint()) && protagonist.getInventory().size() == numberOfItems){
 			message = "You win!";
@@ -202,14 +215,36 @@ public class Game {
 
 	private List<Direction> getValidMoves(Room room) {
 		List<Direction> valid = new ArrayList<>();
-		if(room.getNeighbor(Direction.NORTH)!=null && !room.getNeighbor(Direction.NORTH).hasAntagonist() && !notValid.contains(room) )
-			valid.add(Direction.NORTH);
-		if(room.getNeighbor(Direction.EAST)!=null && !room.getNeighbor(Direction.EAST).hasAntagonist() && !notValid.contains(room))
-			valid.add(Direction.EAST);
-		if(room.getNeighbor(Direction.SOUTH)!=null && !room.getNeighbor(Direction.SOUTH).hasAntagonist() &&  !notValid.contains(room))
-			valid.add(Direction.SOUTH);
-		if(room.getNeighbor(Direction.WEST)!=null && !room.getNeighbor(Direction.WEST).hasAntagonist()&& !notValid.contains(room))
-			valid.add(Direction.WEST);
+//		if(room.getNeighbor(Direction.NORTH)!=null && !room.getNeighbor(Direction.NORTH).hasAntagonist() && !notValid.contains(room) )
+//			valid.add(Direction.NORTH);
+//		if(room.getNeighbor(Direction.EAST)!=null && !room.getNeighbor(Direction.EAST).hasAntagonist() && !notValid.contains(room))
+//			valid.add(Direction.EAST);
+//		if(room.getNeighbor(Direction.SOUTH)!=null && !room.getNeighbor(Direction.SOUTH).hasAntagonist() &&  !notValid.contains(room))
+//			valid.add(Direction.SOUTH);
+//		if(room.getNeighbor(Direction.WEST)!=null && !room.getNeighbor(Direction.WEST).hasAntagonist()&& !notValid.contains(room))
+//			valid.add(Direction.WEST);
+//		Direction cur; 
+//		for(int i = 0; i< valid.size(); i++){
+//			cur = valid.get(i);
+//			if(room.getNeighbor(cur).equals(current)){
+//				valid.remove(cur);
+//			}
+//			if(room.getNeighbor(cur).equals(map.getStartingPoint())){
+//				valid.remove(cur);
+//			}
+//			if(room.getNeighbor(cur).equals(map.getEndingPoint())){
+//				valid.remove(cur);
+//			}
+//		}
+		for(Direction d: Direction.values()){
+			if(room.getNeighbor(d)!=null){
+				if(!room.getNeighbor(d).hasAntagonist()){
+					if(!room.getNeighbor(d).equals(map.getStartingPoint()) && !room.getNeighbor(d).equals(map.getEndingPoint()) && !room.getNeighbor(d).equals(current)){
+						valid.add(d);
+					}
+				}
+			}
+		}
 		
 		return valid;		
 	}
@@ -312,8 +347,9 @@ public class Game {
 			game.printMessage();
 			turn = scan.nextLine();
 		}
-		scan.close();
 		System.out.println("Game over.");	
+		scan.close();
+		
 		
 	}
 
