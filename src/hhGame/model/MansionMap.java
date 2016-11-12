@@ -51,7 +51,7 @@ public class MansionMap extends GameMap {
 		hall.setNeighbors(library, parlor, gStair, gallery);
 		parlor.setNeighbors(study, kitchen, dining, hall);
 		kitchen.setNeighbors(null, cellar, nook,parlor);
-		cellar.setNeighbors(null, null, greenhouse, nook);
+		cellar.setNeighbors(null, null, greenhouse, kitchen);
 		anteroom.setNeighbors(null, library, gallery, null);
 		library.setNeighbors(null, study, hall, anteroom);
 		study.setNeighbors(null, billard, parlor, library);

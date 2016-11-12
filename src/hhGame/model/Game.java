@@ -18,6 +18,7 @@ public class Game {
 	private boolean gameOver;
 	private int numberOfItems; 
 	List<Room> notValid;
+	private boolean debug = false;
 
 	public Game(Level l){
 		setup(l);
@@ -71,7 +72,7 @@ public class Game {
 	public boolean searchCurrentRoom(){
 		if(current.getItem()!=null){
 			protagonist.addItemToInventory(current.getItem());
-			message = "You found the " + current.getItem().getName();
+			message = "You found the " + current.getItem().getName() + ": " + current.getItem().getDescription();
 			current.setItem(null);
 			
 			if(!antagonistPresent){
@@ -128,7 +129,9 @@ public class Game {
 			Item i = items.get(items.size()-1);
  			Room temp = getRandomRoom();
 			if(temp.getItem()==null){
-				System.out.println("item placed in " + temp.getName());
+				if(debug){
+					System.out.println("item placed in " + temp.getName());
+				}
 				temp.setItem(i);
 				items.remove(i);
 			}
@@ -150,7 +153,9 @@ public class Game {
 		int count = 0;
 		for(Room r: map.getRoomsInMap()){
 			if(r.hasAntagonist()){
-				System.out.println("\nAn antagonist can be found in " + r.getName());
+				if(debug){
+					System.out.println("\nAn antagonist can be found in " + r.getName());
+				}				
 				count++;
 			}
 		}
@@ -212,7 +217,9 @@ public class Game {
 			temp.setAntagonist(true);
 			antagonist.setAntagonist(false);
 			antagonist = temp;
-			System.out.println("The antagonist is now in " + antagonist.getName());
+			if(debug){
+				System.out.println("The antagonist is now in " + antagonist.getName());
+			}
 			System.out.flush();
 		}
 	}
@@ -344,6 +351,15 @@ public class Game {
 				case "LOOK":
 					System.out.println("The current room is "+ game.getCurrent().getName());
 					break;
+				case "CHECK":
+					System.out.print("You have found ");
+					if(game.protagonist.getInventory().size()<1){
+						System.out.println("nothing.");
+					}
+					for(Item i : game.protagonist.getInventory()){
+						System.out.print("the " + i.getName() + ", ");
+					}
+					System.out.println("");
 				default:
 					System.out.println("Invalid input. Please type a direction or search to search the room.");
 					break;
