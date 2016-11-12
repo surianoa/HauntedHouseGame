@@ -26,6 +26,10 @@ public class Game {
 	private void setup(Level l) {
 		random = new Random();
 		switch(l){
+		case MANOR:
+			map = new MansionMap();
+			map.buildMap();
+			break;
 		default:
 			map = new TestMap();
 			map.buildMap();
@@ -67,7 +71,7 @@ public class Game {
 	public boolean searchCurrentRoom(){
 		if(current.getItem()!=null){
 			protagonist.addItemToInventory(current.getItem());
-			message = "You found a new " + current.getItem().getName();
+			message = "You found the " + current.getItem().getName();
 			current.setItem(null);
 			
 			if(!antagonistPresent){
@@ -313,7 +317,7 @@ public class Game {
 
 	public static void main(String[] args) {
 		
-		Game game = new Game(Level.TEST);
+		Game game = new Game(Level.MANOR);
 		System.out.println("Welcome to the Maison Macabre. You are in the " + game.getCurrent().getName()+ "\n");
 		Scanner scan = new Scanner(System.in);
 		String turn = scan.nextLine();

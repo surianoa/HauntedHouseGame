@@ -1,5 +1,6 @@
 package hhGame.model;
 
 public enum Level {
-	TEST
+	TEST,
+	MANOR
 }
