@@ -20,7 +20,8 @@ public class MansionMap extends GameMap {
 		Room nook = new Room("Nook", "Quaint room looking out to the greenhouse.", null);
 		Room greenhouse = new Room("Greenhouse", "Room made of glass, filled with exotic plants", null);
 		Room grounds = new Room("Grounds", "Sprawling grounds lined with trees and winding paths", null);
-		Room maze = new Room("Hedge Maze", "Maze with tall walls of hedges. You can hear a fountian spashing somewhere inside", null);
+		Room maze = new Room("Hedge Maze", "Maze with tall walls of hedges. You can hear a fountian spashing somewhere inside.\n"
+				+ "You notice a small passage to the south. I wonder where it goes.", null);
 		Room graves = new Room("Family plot", "Graves are scattered about. Some look to date all the way back to the 1600s", null);
 		Room mausoleum = new Room("Mausoleum", "A forboding buulding with a wrought-iron gate", null);
 		Room gallery = new Room("Gallery","Convoluted room filled with odd paintings and sculptures", null);
@@ -31,12 +32,13 @@ public class MansionMap extends GameMap {
 		Room anteroom = new Room("Anteroom", "A small room with a few chairs", null);
 		Room library = new Room("Library", "A room filled with books, floor to ceiling. A small fire is burning in the fireplace", null);
 		Room study = new Room("Study","A small room with tables and lamps. A drawing board sits in the corner covered in pencil shavings", null);
-		Room billard = new Room("Games Room", "A game table lit with an overhead green lamp dominates the roomm. You notice a dart board with your picture on the wall", null);
+		Room billard = new Room("Games Room", "A game table lit with an overhead green lamp dominates the roomm. You notice something odd about the bookcase on the east wall.\n"
+				+ "You investigate the books and find a switch. You press it and reveal a passage. I wonder where it goes.", null);
 		Room chamber = new Room("Draining Chamber", "There are large hooks hanging from the ceiling with large basins underneath.\n You are overcome with the nauseating scent of blood. Could this be fresh? You "
 				+ "notice \n a small passage behind a crate to the north.", null);
 		Room bedroom = new Room("Master Suite", "Room with a large canopied bed. Ornate furniture lines the walls.", null);
 		Room bathroom = new Room("Bathroom", "A large claw-footed bathtub is in the center of the room. There is a dull brown ring around the inside of the tub.\n The air tastes slightly metalic"
-				+ "You notice a small door behind a curtain to the north." , null);
+				+ " You notice a small door behind a curtain to the north." , null);
 		
 		
 		porch.setNeighbors(foyer, null, null, null);
@@ -45,7 +47,7 @@ public class MansionMap extends GameMap {
 		sitting.setNeighbors(dining, null, null, foyer);
 		mausoleum.setNeighbors(null, graves, null, null);
 		graves.setNeighbors(null, null, grounds, mausoleum);
-		maze.setNeighbors(grounds, null, null, null);
+		maze.setNeighbors(grounds, null, billard, null);
 		grounds.setNeighbors(graves, veranda, maze, null);
 		veranda.setNeighbors(null, ballroom, null,grounds);
 		ballroom.setNeighbors(gallery, gStair, lounge, veranda);
@@ -61,7 +63,7 @@ public class MansionMap extends GameMap {
 		anteroom.setNeighbors(null, library, gallery, bedroom);
 		library.setNeighbors(null, study, hall, anteroom);
 		study.setNeighbors(null, billard, parlor, library);
-		billard.setNeighbors(null, null, null, study);
+		billard.setNeighbors(null, maze, null, study);
 		chamber.setNeighbors(bathroom, null, null, cellar);
 		bedroom.setNeighbors(bathroom, anteroom, null, null);
 		bathroom.setNeighbors(chamber, null, bedroom, null);
@@ -159,7 +161,13 @@ public class MansionMap extends GameMap {
 		return "The temperature in the room drops. The lights go out. You reach for your flashlight. You fumble with it but finaly are able to light it. You look around\n"
 				+ "the room. Nothing appears to be out of the ordinary, but you can see your breath. You turn to leave the room and catch the glint of a blade out of the corner\n"
 				+ "of your eye. You swerve to dodge it but it's too late. The blade is dragged across your throat. In your last moments you see a glowing figure above you dripping in\n"
-				+ "blood and laughing maniacally. Your vision closes in until everything goes dark....";
+				+ "blood and laughing maniacally. Your vision closes in until everything goes dark....\n\n\nGame Over.";
+	}
+
+	@Override
+	public String getWarningMessage() {
+		return "You notice the room is cold and you can see your break. The Spirit of the Bloody Countess must be close.\n"
+				+ "Watch your step.";
 	}
 
 }

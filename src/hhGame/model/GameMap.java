@@ -28,4 +28,5 @@ public abstract class GameMap {
 
 	public abstract String getWinMessage();
 	public abstract String getLoseMessage();
+	public abstract String getWarningMessage();
 }

@@ -14,12 +14,13 @@ public class Game {
 	private boolean antOut;
 	private Random random;
 	private boolean antagonistPresent;
+	private boolean closeToPlayer;
 	private final int MAX_TRIES = 10;
 	String message;
 	private boolean gameOver;
 	private int numberOfItems; 
 	List<Room> notValid;
-	private boolean debug = true;
+	private boolean debug = false;
 
 	public Game(Level l){
 		setup(l);
@@ -54,6 +55,7 @@ public class Game {
 		antagonistPresent = false;
 		message = "Please type a direction or command. For help, enter help";
 		gameOver = false;
+		closeToPlayer = false;
 	}
 
 	public void movePlayer(Direction move) {
@@ -179,7 +181,7 @@ public class Game {
 				message = "You are now in the " + current.getName()+" - " + current.getDescription();
 				checkWin();
 				moveAntagonist();
-				checkForAntagonist();
+				closeToPlayer = checkForAntagonist();
 			}
 			
 		}else{
@@ -191,7 +193,8 @@ public class Game {
 		for(Direction d: Direction.values()){
 			if(current.getNeighbor(d)!=null){
 				if(current.getNeighbor(d).hasAntagonist()){
-					message+="\nThe antagonist is nearby. Watch your step.";
+					message+="\n"+map.getWarningMessage();
+					return true;
 				}
 			}
 		}
@@ -261,8 +264,15 @@ public class Game {
 
 	public void moveAntagonist() {
 		if(antagonistPresent){
-			List<Direction> validMoves = getValidMoves(antagonist);
-			Room temp = antagonist.getNeighbor(validMoves.get(random.nextInt(validMoves.size())));			
+			Room temp;
+			if(closeToPlayer){
+				List<Direction> validMoves = getValidMoves(antagonist);
+				temp = antagonist.getNeighbor(validMoves.get(random.nextInt(validMoves.size())));	
+			}
+			else{
+				temp = getRandomRoom();
+			}
+					
 			temp.setAntagonist(true);
 			antagonist.setAntagonist(false);
 			antagonist = temp;

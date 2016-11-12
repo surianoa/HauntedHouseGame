@@ -81,6 +81,11 @@ public class TestMap extends GameMap {
 	public String getLoseMessage() {
 		return "lol ded. try again";
 	}
+
+	@Override
+	public String getWarningMessage() {
+		return "you hear a peg leg scraping. It must be that bitch named deltres";
+	}
 	
 
 
