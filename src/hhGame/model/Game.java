@@ -9,16 +9,17 @@ public class Game {
 
 	private GameMap map;
 	private Room current, last, antagonist;
+	private String antagonistName;
 	private Player protagonist;
 	private boolean antOut;
-	Random random;
+	private Random random;
 	private boolean antagonistPresent;
 	private final int MAX_TRIES = 10;
 	String message;
 	private boolean gameOver;
 	private int numberOfItems; 
 	List<Room> notValid;
-	private boolean debug = false;
+	private boolean debug = true;
 
 	public Game(Level l){
 		setup(l);
@@ -45,12 +46,13 @@ public class Game {
 		last = null;
 		antOut = false;
 		antagonist = null;
+		antagonistName = map.getAntagonistName();
 		notValid = new ArrayList<>();
 		notValid.add(map.getEndingPoint());
 		notValid.add(map.getStartingPoint());
 		notValid.add(current);
 		antagonistPresent = false;
-		message = "Welcome to the game";
+		message = "Please type a direction or command. For help, enter help";
 		gameOver = false;
 	}
 
@@ -77,8 +79,9 @@ public class Game {
 			
 			if(!antagonistPresent){
 				placeAntagonist();
-				message += "\nYou have unleashed the antagonist. Don't get caugt.";
+				message += "\nYou have unleashed the "+antagonistName+". Don't get caugt.";
 			}
+			moveAntagonist();
 			checkForAntagonist();
 			return true;
 		}
@@ -172,11 +175,13 @@ public class Game {
 			if(current.hasAntagonist()){
 				killPlayer();
 			}else{
+				
+				message = "You are now in the " + current.getName()+" - " + current.getDescription();
+				checkWin();
 				moveAntagonist();
+				checkForAntagonist();
 			}
-			message = "You are now in the " + current.getName();
-			checkWin();
-			checkForAntagonist();
+			
 		}else{
 			message = "There is no room in that direction. Try again";
 		}		
@@ -196,8 +201,9 @@ public class Game {
 
 	private void checkWin() {
 		if(current.equals(map.getEndingPoint()) && protagonist.getInventory().size() == numberOfItems){
-			message = "You win!";
+			message = map.getWinMessage();
 			gameOver = true;
+			printMessage();
 		}
 		
 	}
@@ -205,9 +211,52 @@ public class Game {
 	private void printMessage() {
 		System.out.println(message);
 		if(!gameOver){
+			printRoom();
 			System.out.println("Please type a command:");
 			message = "";
 		}		
+	}
+
+	private void printRoom() {
+		if(current.getNorth()!=null){
+			System.out.println("  _____  _____   ");
+		}
+		else{
+			System.out.println("  ____________   ");
+		}
+		
+		if(current.getItem()!=null){
+			System.out.println("  |         O|   ");
+		}
+		else{
+			System.out.println("  |          |  ");
+		}
+		System.out.println("  |          |  ");
+		
+		if(current.getEast()!= null && current.getWest() != null){
+			System.out.println("");
+		}
+		else if(current.getWest()!=null){
+			System.out.println("             |  ");
+		}
+		else if(current.getEast()!=null){
+			System.out.println("  |            ");
+		}
+		else{
+			System.out.println("  |          |  ");
+		}
+			
+		System.out.println("  |          |  ");
+		
+		if(current.getSouth()!=null){
+			System.out.println("  |____  ____|   ");
+		}
+		else{
+			System.out.println("  |__________|   ");
+		}
+		
+		System.out.println("\n   Room: " + current.getName());
+		
 	}
 
 	public void moveAntagonist() {
@@ -261,9 +310,9 @@ public class Game {
 	}
 
 	private void killPlayer() {
-		message = "You have encountered an antagonist. You are dead.";
-		printMessage();
-		gameOver = true;		
+		message = map.getLoseMessage();
+		gameOver = true;	
+		printMessage();			
 	}
 
 	private boolean isValidMove(Direction d) {
@@ -325,11 +374,13 @@ public class Game {
 	public static void main(String[] args) {
 		
 		Game game = new Game(Level.MANOR);
-		System.out.println("Welcome to the Maison Macabre. You are in the " + game.getCurrent().getName()+ "\n");
+		System.out.println("Welcome to the " + game.getMap().getIntro());
 		Scanner scan = new Scanner(System.in);
-		String turn = scan.nextLine();
+		String turn;// = scan.nextLine();
 		
 		while(!game.gameOver){
+			game.printMessage();
+			turn = scan.nextLine();
 			switch(turn.toUpperCase()){
 				case "NORTH":
 					game.move(Direction.NORTH);
@@ -348,6 +399,7 @@ public class Game {
 					break;
 				case "QUIT":
 					game.gameOver = true;
+					break;
 				case "LOOK":
 					System.out.println("The current room is "+ game.getCurrent().getName());
 					break;
@@ -360,14 +412,22 @@ public class Game {
 						System.out.print("the " + i.getName() + ", ");
 					}
 					System.out.println("");
+					break;
+					
+				case "HELP":
+					System.out.println("Move by typing a valid direction: North, East, South, West.");
+					System.out.println("Search a room for items by typing 'search'");
+					System.out.println("To get a recap of your surroundings, type 'look'");
+					System.out.println("To see what you have in your inventory, type 'check'");
+					System.out.println("To give up on the current quest, type 'quit'");
+					System.out.println("To see these instructions again, type 'help'");
+					break;
 				default:
-					System.out.println("Invalid input. Please type a direction or search to search the room.");
+					System.out.println("Invalid input. For instructions, type 'help'");
 					break;
 			}
-			game.printMessage();
-			turn = scan.nextLine();
 		}
-		System.out.println("Game over.");	
+//		System.out.println("Game over.");	
 		scan.close();
 		
 		

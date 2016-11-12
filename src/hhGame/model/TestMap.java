@@ -61,6 +61,26 @@ public class TestMap extends GameMap {
 		
 		return items;
 	}
+
+	@Override
+	public String getIntro() {
+		return "Shitty test map. Watch out for the generic antagonist";
+	}
+
+	@Override
+	public String getAntagonistName() {
+		return "some bitch named Deltrese";
+	}
+
+	@Override
+	public String getWinMessage() {
+		return "dat bitch dead. good for you";
+	}
+
+	@Override
+	public String getLoseMessage() {
+		return "lol ded. try again";
+	}
 	
 
 

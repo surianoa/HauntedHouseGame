@@ -23,5 +23,9 @@ public abstract class GameMap {
 	public abstract Room getStartingPoint();
 	public abstract Room getEndingPoint();
 	public abstract List<Item> getMapItems();
-		
+	public abstract String getIntro();
+	public abstract String getAntagonistName();
+
+	public abstract String getWinMessage();
+	public abstract String getLoseMessage();
 }
